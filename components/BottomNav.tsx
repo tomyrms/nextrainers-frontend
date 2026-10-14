@@ -16,8 +16,8 @@ interface NavItem {
 
 const ITEMS: NavItem[] = [
   { label: "Accueil", icon: House, href: "/fr/accueil" },
-  { label: "Saison", icon: CalendarRange },
-  { label: "Bibliothèque", icon: FolderOpen },
+  { label: "Saison", icon: CalendarRange, href: "/fr/saison" },
+  { label: "Bibliothèque", icon: FolderOpen, href: "/fr/bibliotheque" },
   { label: "Équipe", icon: Users },
 ];
 
