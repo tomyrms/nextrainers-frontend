@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Poppins — self-hosted from /public/fonts (no external font CDN)
+--------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-Regular.ttf") format("truetype");
+  font-weight: 100 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-Bold.ttf") format("truetype");
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   `--color-background` is the near-black app canvas measured on the product
+   (also what the landing snapshot paints through `var(--background)`).
+--------------------------------------------------------------------------- */
+@theme {
+  /* Brand */
+  --color-primary: #7de2ce;
+  --color-primary-foreground: #1c1c1c;
+  --color-secondary: #b57de2;
+  --color-accent: #847de2;
+  --color-tertiary: #00c8f5;
+  --color-destructive: #ff4267;
+  --color-inverse: #ff4267;
+
+  /* Surfaces */
+  --color-background: #0b0d0e;
+  --color-background-lighter: #232a2f;
+  --color-card: #232a2f;
+  --color-surface: rgba(255, 255, 255, 0.08);
+  --color-fill: rgba(255, 255, 255, 0.08);
+  --color-fill-strong: rgba(255, 255, 255, 0.14);
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-darker: #1c1c1c;
+
+  /* Text */
+  --color-foreground: #ffffff;
+  --color-muted-foreground: rgba(255, 255, 255, 0.5);
+
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+
+  --radius-card: 20px;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    background-color: var(--color-background);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  /* Teal surface with soft radial highlights, an outer bloom and a faint
+     film grain. Used by the landing CTA and the "new training" card. */
+  .glow-primary {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--color-primary);
+    background-image: radial-gradient(
+        at 20% 30%,
+        rgba(160, 235, 217, 0.8) 0px,
+        transparent 50%
+      ),
+      radial-gradient(at 80% 70%, rgba(95, 212, 186, 0.7) 0px, transparent 50%),
+      radial-gradient(at 50% 10%, rgba(232, 250, 246, 0.6) 0px, transparent 45%),
+      radial-gradient(at 60% 85%, rgba(72, 197, 171, 0.5) 0px, transparent 50%),
+      radial-gradient(
+        at 30% 60%,
+        rgba(255, 255, 255, 0.4) 0px,
+        transparent 55%
+      );
+    box-shadow: 0 0 15px 5px rgba(125, 226, 206, 0.25);
+    transition:
+      box-shadow 200ms ease,
+      transform 200ms ease;
+  }
+
+  .glow-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0.12;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    background-size: 180px 180px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23grain)'/%3E%3C/svg%3E");
+  }
+
+  .glow-primary:hover {
+    box-shadow: 0 0 20px 12px rgba(125, 226, 206, 0.4);
+  }
+
+  /* Muted hairlines used by the "next match" card ornaments. */
+  .hairline {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+}
