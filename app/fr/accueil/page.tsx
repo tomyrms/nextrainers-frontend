@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { CreateTrainingCard } from "@/components/CreateTrainingCard";
-import { NextMatchCard } from "@/components/NextMatchCard";
-import { TrainingsCard } from "@/components/TrainingsCard";
+import { NextMatchCard, NextMatchCardLive } from "@/components/NextMatchCard";
+import { TrainingsCard, TrainingsCardLive } from "@/components/TrainingsCard";
 
 export const metadata: Metadata = {
   title: "Accueil - Nextrainers",
@@ -29,8 +30,15 @@ export default function AccueilPage() {
 
           <div className="space-y-6">
             <CreateTrainingCard />
-            <NextMatchCard />
-            <TrainingsCard />
+
+            {/* Backend data streams in at request time; the prerendered shell
+                keeps the exact empty states as fallbacks. */}
+            <Suspense fallback={<NextMatchCard />}>
+              <NextMatchCardLive />
+            </Suspense>
+            <Suspense fallback={<TrainingsCard />}>
+              <TrainingsCardLive />
+            </Suspense>
           </div>
         </div>
       </main>
