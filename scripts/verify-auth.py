@@ -1,10 +1,11 @@
 """End-to-end verification of the connexion/inscription flow.
 
 Register a unique account on /fr/inscription, assert the auto-login lands on
-/fr/accueil with a live session (GET /api/session returns the user), then sign
-out and sign back in through the AppHeader "Connexion" pill and the
-/fr/connexion form. Finally log out through the proxy and assert the session is
-gone. The whole happy path must log zero console errors and zero page errors.
+/fr/accueil with a live session (GET /api/session returns the user) and the
+header swaps the pills for the /fr/profil avatar, then sign back in through
+the /fr/connexion form. Finally log out through the proxy and assert the
+session is gone. The whole happy path must log zero console errors and zero
+page errors.
 
 Then, in a separate context, the French error lines are covered: duplicate
 email (409) on inscription and bad credentials (401) on connexion — those
@@ -117,10 +118,16 @@ async def main() -> None:
             json.dumps(user),
         )
 
-        # ---- 2. Header pill -> /fr/connexion -> sign back in.
-        await page.get_by_role("link", name="Connexion", exact=True).click()
-        await page.wait_for_url("**/fr/connexion", timeout=15_000)
-        check("header 'Connexion' pill lands on /fr/connexion", True, page.url)
+        # ---- 2. The signed-in header swaps the pills for the /fr/profil
+        #         avatar; sign back in through the /fr/connexion form.
+        await page.wait_for_selector('header a[href="/fr/profil"]', timeout=15_000)
+        check(
+            "signed-in header swaps the pills for the avatar link",
+            await page.locator('header a[href="/fr/profil"]').count() == 1
+            and await page.locator('header a[href="/fr/connexion"]').count() == 0,
+        )
+        await page.goto(f"{BASE_URL}/fr/connexion", wait_until="load")
+        check("connexion form reachable for sign-in", True, page.url)
         await page.evaluate("document.fonts.ready")
         await page.wait_for_timeout(400)
         await page.screenshot(path=str(DOCS_DIR / "connexion.png"))

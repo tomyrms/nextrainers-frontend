@@ -73,8 +73,12 @@ export function LandingHero() {
           <div className="my-5 h-0.5 w-9 rounded-full bg-primary/80 md:mx-auto" />
 
           <div className="flex flex-col items-center justify-center gap-2">
-            <GlowButton className="w-full md:w-80">Commencer maintenant</GlowButton>
-            <GhostButton className="w-full md:w-80">Se connecter</GhostButton>
+            <GlowButton href="/fr/inscription" className="w-full md:w-80">
+              Commencer maintenant
+            </GlowButton>
+            <GhostButton href="/fr/connexion" className="w-full md:w-80">
+              Se connecter
+            </GhostButton>
           </div>
         </div>
       </section>

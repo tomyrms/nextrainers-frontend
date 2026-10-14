@@ -1,7 +1,9 @@
-import Link from "next/link";
+import { Suspense } from "react";
+
+import { HeaderActions, SignedOutPills } from "@/components/HeaderActions";
 
 /**
- * Signed-out app header: page title on the left, auth actions on the right.
+ * App header: page title on the left, session-aware auth actions on the right.
  * Fixed and transparent so content scrolls underneath it.
  */
 export function AppHeader({ title }: { title: string }) {
@@ -11,18 +13,11 @@ export function AppHeader({ title }: { title: string }) {
         <span className="truncate text-xl font-bold text-white">{title}</span>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link
-            href="/fr/connexion"
-            className="inline-flex h-9 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-fill px-4 text-sm font-medium text-foreground transition-colors hover:bg-fill-strong active:scale-[0.97]"
-          >
-            Connexion
-          </Link>
-          <Link
-            href="/fr/inscription"
-            className="inline-flex h-9 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-white px-4 text-sm font-medium text-darker transition-colors hover:bg-white/85 active:scale-[0.97]"
-          >
-            Inscription
-          </Link>
+          {/* The session cookie read is request-time data: the boundary keeps
+              the static shell byte-identical to the signed-out header. */}
+          <Suspense fallback={<SignedOutPills />}>
+            <HeaderActions />
+          </Suspense>
         </div>
       </div>
     </header>
