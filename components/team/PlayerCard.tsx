@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   ageFromDateOfBirth,
   footLabel,
@@ -31,7 +33,11 @@ export function PlayerCard({ player }: { player: Player }) {
         {player.jerseyNumber}
       </span>
 
-      <div className="min-w-0 flex-1">
+      <Link
+        href={`/fr/equipe/${encodeURIComponent(player.id)}`}
+        aria-label={`Fiche de ${fullName}`}
+        className="min-w-0 flex-1 rounded-lg transition-opacity hover:opacity-90"
+      >
         <p className="truncate text-sm font-bold text-foreground">
           {player.firstName} {player.lastName}
         </p>
@@ -55,7 +61,7 @@ export function PlayerCard({ player }: { player: Player }) {
             ))}
           </div>
         ) : null}
-      </div>
+      </Link>
 
       <DeletePlayerButton playerId={player.id} playerName={fullName} />
     </li>

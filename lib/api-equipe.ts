@@ -26,7 +26,22 @@ export interface Player {
   goals?: number;
   assists?: number;
   strengths?: string[];
+  improvements?: string[];
+  coachNotes?: string;
+  skills?: PlayerSkill[];
 }
+
+export interface PlayerSkill {
+  id: string;
+  /** French display name ("Vitesse"). */
+  name: string;
+  /** 1..10 coach rating. */
+  value: number;
+}
+
+/** Ratings run from 1 to 10 (radar rings + editor bounds). */
+export const SKILL_MIN = 1;
+export const SKILL_MAX = 10;
 
 /** Compact French label per position code (player cards). */
 export const POSITION_LABELS: Record<string, string> = {
@@ -118,6 +133,12 @@ export async function getPlayers(): Promise<Player[]> {
   return Array.isArray(data) ? data : [];
 }
 
+/** `GET /api/players/:id` — the player, or null (unknown id / API down). */
+export async function getPlayer(id: string): Promise<Player | null> {
+  const data = await apiGet<Player>(`/api/players/${encodeURIComponent(id)}`);
+  return data && typeof data.id === "string" ? data : null;
+}
+
 // --- Browser-side mutations (called from client components) ------------------
 
 function mutationBaseUrl(): string {
@@ -172,6 +193,28 @@ export async function deletePlayer(id: string): Promise<boolean> {
     const response = await fetch(
       `${mutationBaseUrl()}/api/players/${encodeURIComponent(id)}`,
       { method: "DELETE" },
+    );
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export type PlayerPatch = {
+  coachNotes?: string;
+  skills?: { id: string; value: number }[];
+};
+
+/** `PATCH /api/players/:id` (coachNotes | skills) — true on any 2xx. */
+export async function patchPlayer(id: string, patch: PlayerPatch): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `${mutationBaseUrl()}/api/players/${encodeURIComponent(id)}`,
+      {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(patch),
+      },
     );
     return response.ok;
   } catch {
