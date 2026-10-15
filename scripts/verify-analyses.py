@@ -9,8 +9,8 @@
 4. 375x812 + 420x900: no console errors, no horizontal overflow.
 
 Saves docs/analyses.png (list) and docs/analyse-detail.png (detail + tips).
-The backend has no DELETE /api/analysis/:id, so the created analysis stays
-(one per run, all named "Test Analyse PW").
+Every "Test Analyse PW" analysis is deleted afterwards (DELETE
+/api/analysis/:id), so runs leave the data clean.
 
 Usage:  python scripts/verify-analyses.py
 Expects the frontend on http://localhost:4970 and the backend on :4900.
@@ -158,6 +158,12 @@ async def main() -> int:
             await context.close()
         finally:
             await browser.close()
+            for analysis in api_get("/api/analysis") or []:
+                if analysis.get("opponentTeamName") == TEST_OPPONENT:
+                    request = urllib.request.Request(
+                        f"{API_URL}/api/analysis/{analysis['id']}", method="DELETE"
+                    )
+                    urllib.request.urlopen(request, timeout=5).close()
 
     print(f"\n== {checks - len(problems)} passed, {len(problems)} failed ==")
     return 1 if problems else 0

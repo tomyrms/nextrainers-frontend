@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import time
 import sys
 import urllib.request
 from pathlib import Path
@@ -101,7 +102,7 @@ async def main() -> None:
             check("radar polygon moved", before_shape != after_shape)
 
             # Coach notes.
-            marker = "Note de vérification"
+            marker = f"Note de vérification {int(time.time())}"
             await page.get_by_label("Notes du coach").fill(marker)
             await page.get_by_role("button", name="Enregistrer").click()
             await page.get_by_text("Notes enregistrées").wait_for()
@@ -117,7 +118,10 @@ async def main() -> None:
             await page.get_by_text("Joueur introuvable").wait_for()
             check("unknown id -> not-found state", True)
         finally:
-            api("PATCH", f"/api/players/{pid}", {"skills": [{"id": skill["id"], "value": original_value}], "coachNotes": original_notes})
+            # PATCH answers the skills wrapper and ignores other fields, so
+            # restore skills and notes separately.
+            api("PATCH", f"/api/players/{pid}", {"skills": [{"id": skill["id"], "value": original_value}]})
+            api("PATCH", f"/api/players/{pid}", {"coachNotes": original_notes})
             await browser.close()
 
     check("0 console errors", not console_errors, "; ".join(console_errors[:3]))

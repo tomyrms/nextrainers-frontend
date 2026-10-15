@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { io } from "next/cache";
 import { ArrowRight, House, Plane, Plus, Shield } from "lucide-react";
 
@@ -96,8 +97,8 @@ export function NextMatchCard({ match = null }: { match?: NextMatch | null }) {
             </span>
           </div>
         ) : (
-          <button
-            type="button"
+          <Link
+            href="/fr/saison"
             className="group flex min-w-0 cursor-pointer flex-col items-center gap-2"
           >
             <div className="flex size-18 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-primary/40 bg-fill transition-all group-hover:border-primary group-hover:shadow-[0_0_24px_rgba(125,226,206,0.25)]">
@@ -106,12 +107,16 @@ export function NextMatchCard({ match = null }: { match?: NextMatch | null }) {
             <span className="mt-1 max-w-full truncate text-sm font-bold text-muted-foreground">
               Ajouter ton adversaire
             </span>
-          </button>
+          </Link>
         )}
       </div>
 
-      <button
-        type="button"
+      <Link
+        href={
+          opponent
+            ? `/fr/analyses?opponent=${encodeURIComponent(opponent)}`
+            : "/fr/saison"
+        }
         className={`flex h-12 w-full min-w-0 cursor-pointer items-center justify-center gap-2 self-center rounded-xl bg-fill font-semibold text-foreground backdrop-blur-md transition-colors hover:bg-fill-strong active:scale-[0.98] ${
           opponent ? "px-4 text-sm" : "px-6 text-base"
         }`}
@@ -122,7 +127,7 @@ export function NextMatchCard({ match = null }: { match?: NextMatch | null }) {
             : "Importer mon calendrier"}
         </span>
         <ArrowRight className="size-5 shrink-0" />
-      </button>
+      </Link>
     </section>
   );
 }
