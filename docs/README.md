@@ -66,3 +66,15 @@ Dans `app/globals.css` (`@theme`) : `--color-primary` #7DE2CE,
 `rgba(255,255,255,.12)`, texte secondaire `rgba(255,255,255,.5)`,
 `--radius-card` 20px. Le fond #0B0D0E est la valeur mesurée sur les captures de
 référence.
+
+## Écrans analyses & notifications
+
+| route | contenu | vérification |
+| --- | --- | --- |
+| `/fr/analyses` | formulaire « Nouvelle analyse » (pré-rempli par `?opponent=`) + liste des analyses (`GET /api/analysis`) | `scripts/verify-analyses.py` → `docs/analyses.png` |
+| `/fr/analyses/[id]` | systèmes en présence + conseils groupés par catégorie (Attaque, Défense, Transitions, Coups de pied arrêtés), bouton « Générer les conseils » si vide, état « Analyse introuvable » sur 404 | `docs/analyse-detail.png` |
+| `/fr/notifications` | boîte de réception (non lues, date relative, tap → lu + ouverture de l'écran lié), « Tout marquer comme lu » ; cloche avec badge dans l'en-tête connecté | `scripts/verify-notifications.py` → `docs/notifications.png` |
+
+Les scripts lisent les données attendues en direct sur l'API (:4900), testent
+les flux de création / lecture, puis vérifient 0 erreur console et l'absence de
+débordement horizontal à 375 et 420 px.
