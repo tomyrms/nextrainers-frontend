@@ -18,15 +18,15 @@ const ITEMS: NavItem[] = [
   { label: "Accueil", icon: House, href: "/fr/accueil" },
   { label: "Saison", icon: CalendarRange, href: "/fr/saison" },
   { label: "Bibliothèque", icon: FolderOpen, href: "/fr/bibliotheque" },
-  { label: "Équipe", icon: Users },
+  { label: "Équipe", icon: Users, href: "/fr/equipe" },
 ];
 
 const ITEM_BASE =
   "flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 py-2 transition-opacity duration-300";
 
 /**
- * Fixed bottom navigation, 5 slots with the teal "create" action in the middle.
- * Only `Accueil` is wired to a route for now; the others are inert affordances.
+ * Fixed bottom navigation, 5 slots with the teal "create" action in the middle
+ * (links to the /fr/creer flow). Every tab is a route; `active` highlights one.
  */
 export function BottomNav({ active = "Accueil" }: { active?: string }) {
   return (
@@ -36,15 +36,11 @@ export function BottomNav({ active = "Accueil" }: { active?: string }) {
           <NavEntry key={item.label} item={item} active={active} />
         ))}
 
-        <button
-          type="button"
-          aria-label="Créer"
-          className={ITEM_BASE}
-        >
+        <Link href="/fr/creer" aria-label="Créer" className={ITEM_BASE}>
           <span className="flex size-12 items-center justify-center rounded-xl bg-primary text-darker transition-transform duration-300 ease-out hover:scale-105">
             <Plus className="size-6" />
           </span>
-        </button>
+        </Link>
 
         {ITEMS.slice(2).map((item) => (
           <NavEntry key={item.label} item={item} active={active} />
