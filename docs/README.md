@@ -78,3 +78,10 @@ référence.
 Les scripts lisent les données attendues en direct sur l'API (:4900), testent
 les flux de création / lecture, puis vérifient 0 erreur console et l'absence de
 débordement horizontal à 375 et 420 px.
+
+## Fiche joueur & accueil connecté
+
+| Route | Contenu | Vérification |
+|---|---|---|
+| `/fr/equipe/[id]` | stats, radar des compétences (SVG serveur), steppers −/+ (PATCH skills → le radar suit), points forts, axes de progression, notes du coach (PATCH coachNotes), état « Joueur introuvable » | `scripts/verify-joueur.py` → `docs/joueur.png` |
+| `/fr/accueil` (bloc « Informations ») | déconnecté : carte « Rejoignez Nextrainers » → inscription · connecté : carte masquée, bannière « Quel grand coach es-tu ? » masquable (localStorage, même clé que l'original) | `scripts/verify-accueil-session.py` → `docs/accueil-signedin.png` |
