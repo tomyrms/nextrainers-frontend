@@ -1,4 +1,5 @@
 import { CalendarDays, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 import { getTrainings, type Training } from "@/lib/api";
 
@@ -69,8 +70,8 @@ export function TrainingsCard({ trainings = [] }: { trainings?: Training[] }) {
         <ul className="mt-4 space-y-2">
           {sessions.map((session) => (
             <li key={session.id}>
-              <button
-                type="button"
+              <Link
+                href={`/fr/entrainements/${encodeURIComponent(session.id)}`}
                 className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-white/8 bg-black/20 p-3 text-left transition-colors hover:bg-black/30"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/8 text-primary">
@@ -91,7 +92,7 @@ export function TrainingsCard({ trainings = [] }: { trainings?: Training[] }) {
                   </span>
                 </span>
                 <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-              </button>
+              </Link>
             </li>
           ))}
         </ul>

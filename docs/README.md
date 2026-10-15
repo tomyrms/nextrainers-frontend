@@ -33,6 +33,25 @@ réseau au repos, relève les erreurs console et enregistre :
 
 Il vérifie en plus l'absence de débordement horizontal (360/420/480/768/1280/1440 px).
 
+## Créer, détail d'entraînement et partage
+
+| route | contenu |
+| --- | --- |
+| `/fr/creer` | flux « + » : créer un entraînement (nom, thème, date, exercices de la bibliothèque filtrés par type, durée calculée) · préparer un match (→ `/fr/analyses`) · générer ma saison (→ `/fr/saison`) |
+| `/fr/entrainements/[id]` | détail : thème, date longue, durée, programme ordonné (schémas rendus en `<img>`), « Partager » (lien `/share/<token>` copié) et « Dupliquer » |
+| `/share/[token]` | page publique en lecture seule (sans navigation), « Partagée par », CTA inscription ; lien invalide → état dédié |
+
+Les lignes « Mes entraînements » de l'accueil ouvrent le détail.
+
+```bash
+python scripts/verify-creer.py   # chooser + création UI (3 exercices) → détail vs GET /api/trainings/:id
+python scripts/verify-share.py   # partage → page publique (contexte vierge) vs API, duplication, lien invalide
+```
+
+Les deux scripts vérifient 0 erreur console et aucun débordement à 375/420 px,
+suppriment leurs séances de test, et enregistrent `docs/creer.png`,
+`docs/entrainement.png` et `docs/share.png`.
+
 ## Assets
 
 `public/fonts` (Poppins Regular/Bold, self-hosted), `public/images` et
