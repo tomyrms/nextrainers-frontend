@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { CreateTrainingCard } from "@/components/CreateTrainingCard";
+import { HomeInfos, SignedOutInfos } from "@/components/home/HomeInfos";
 import { NextMatchCard, NextMatchCardLive } from "@/components/NextMatchCard";
 import { TrainingsCard, TrainingsCardLive } from "@/components/TrainingsCard";
 
@@ -38,6 +39,10 @@ export default function AccueilPage() {
             </Suspense>
             <Suspense fallback={<TrainingsCard />}>
               <TrainingsCardLive />
+            </Suspense>
+            {/* Session-aware: sign-up card when signed out, banner when signed in. */}
+            <Suspense fallback={<SignedOutInfos />}>
+              <HomeInfos />
             </Suspense>
           </div>
         </div>

@@ -1,13 +1,13 @@
+import Link from "next/link";
 import { CirclePlus, ArrowRight } from "lucide-react";
 
 /**
- * Hero CTA of the home screen: opens the training builder
- * (signed-out for now, so it is a static affordance).
+ * Hero CTA of the home screen: opens the "+" create flow (/fr/creer).
  */
 export function CreateTrainingCard() {
   return (
-    <button
-      type="button"
+    <Link
+      href="/fr/creer"
       className="glow-primary flex w-full cursor-pointer flex-col justify-between gap-10 rounded-card border border-white/20 p-6 text-left text-primary-foreground active:scale-[0.98]"
     >
       <span className="flex w-full justify-end">
@@ -17,6 +17,6 @@ export function CreateTrainingCard() {
         Créer un nouvel entraînement
         <ArrowRight className="ml-2 size-5" strokeWidth={2} />
       </span>
-    </button>
+    </Link>
   );
 }
