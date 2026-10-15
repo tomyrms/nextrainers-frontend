@@ -3,6 +3,7 @@
 import { Check, LoaderCircle, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { BROWSER_API_BASE } from "@/lib/backend-auth";
 
 /** How long the inline success confirmation stays visible. */
 const SUCCESS_MESSAGE_MS = 4_000;
@@ -24,7 +25,7 @@ export function GenerateSessionsButton({ seasonPlanId }: { seasonPlanId: string 
     setState("pending");
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4900"}/api/season/generate`,
+        `${BROWSER_API_BASE}/api/season/generate`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

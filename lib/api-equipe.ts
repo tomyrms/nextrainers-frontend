@@ -10,6 +10,8 @@
  * hence the `||` fallbacks and the lazy base-url lookups below.
  */
 
+import { BROWSER_API_BASE, backendAuthHeaders } from "@/lib/backend-auth";
+
 export interface Player {
   id: string;
   firstName: string;
@@ -119,7 +121,7 @@ export function statsSummary(player: Player): string {
 async function apiGet<T>(path: string): Promise<T | null> {
   const base = process.env.API_BASE_URL || "http://localhost:4900";
   try {
-    const response = await fetch(`${base}${path}`, { cache: "no-store" });
+    const response = await fetch(`${base}${path}`, { cache: "no-store", headers: await backendAuthHeaders() });
     if (!response.ok) return null;
     return (await response.json()) as T;
   } catch {
@@ -142,7 +144,7 @@ export async function getPlayer(id: string): Promise<Player | null> {
 // --- Browser-side mutations (called from client components) ------------------
 
 function mutationBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4900";
+  return BROWSER_API_BASE;
 }
 
 export interface CreatePlayerInput {

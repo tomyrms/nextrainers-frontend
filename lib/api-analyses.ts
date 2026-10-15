@@ -7,6 +7,8 @@
  * followed by navigation or `router.refresh()`.
  */
 
+import { BROWSER_API_BASE, backendAuthHeaders } from "@/lib/backend-auth";
+
 export interface AnalysisTip {
   id: string;
   /** "defense" | "attack" | "transition" | "setPieces" (free string tolerated). */
@@ -54,7 +56,7 @@ export const FORMATION_OPTIONS = [
 async function apiGet<T>(path: string): Promise<{ status: number; data: T | null }> {
   const base = process.env.API_BASE_URL || "http://localhost:4900";
   try {
-    const response = await fetch(`${base}${path}`, { cache: "no-store" });
+    const response = await fetch(`${base}${path}`, { cache: "no-store", headers: await backendAuthHeaders() });
     if (!response.ok) return { status: response.status, data: null };
     return { status: response.status, data: (await response.json()) as T };
   } catch {
@@ -103,7 +105,7 @@ export async function getAnalysis(id: string): Promise<AnalysisResult> {
 // --- Browser-side mutations --------------------------------------------------
 
 function mutationBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4900";
+  return BROWSER_API_BASE;
 }
 
 export interface CreateAnalysisInput {

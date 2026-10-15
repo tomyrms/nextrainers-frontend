@@ -5,6 +5,8 @@
  * run in the browser against the public API URL and resolve to a boolean.
  */
 
+import { BROWSER_API_BASE, backendAuthHeaders } from "@/lib/backend-auth";
+
 export interface InboxNotification {
   id: string;
   title: string;
@@ -28,7 +30,7 @@ export interface Inbox {
 export async function getInbox(): Promise<Inbox | null> {
   const base = process.env.API_BASE_URL || "http://localhost:4900";
   try {
-    const response = await fetch(`${base}/api/notifications/inbox`, { cache: "no-store" });
+    const response = await fetch(`${base}/api/notifications/inbox`, { cache: "no-store", headers: await backendAuthHeaders() });
     if (!response.ok) return null;
     const data = (await response.json()) as Partial<Inbox> | null;
     if (!data || !Array.isArray(data.notifications)) return null;
@@ -93,7 +95,7 @@ export function cloneRoute(path: string | null | undefined): string | null {
 // --- Browser-side mutations --------------------------------------------------
 
 function mutationBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4900";
+  return BROWSER_API_BASE;
 }
 
 /** `PATCH /api/notifications/inbox/:id/read` — true on any 2xx. */

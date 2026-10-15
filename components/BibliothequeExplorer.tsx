@@ -11,16 +11,16 @@ import {
   type Exercise,
   type ExerciseType,
 } from "@/lib/api-bibliotheque";
+import { BROWSER_API_BASE } from "@/lib/backend-auth";
 
 /**
- * Browser-side call to the clone backend (permissive CORS). The page itself
- * reads through the server helpers in `lib/api-bibliotheque.ts`; only the
- * favorite mutations go straight to the API, then `router.refresh()` re-reads
+ * Browser-side call to the clone backend through the same-origin proxy (adds
+ * the session token). The page itself reads through the server helpers in
+ * `lib/api-bibliotheque.ts`; only the favorite mutations go to the API, then
+ * `router.refresh()` re-reads
  * the server truth for both lists.
  */
-const FAVORITES_URL = `${
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4900"
-}/api/exercises/favorite`;
+const FAVORITES_URL = `${BROWSER_API_BASE}/api/exercises/favorite`;
 
 /** Case- and accent-insensitive form, so "riviere" matches "rivière". */
 function normalize(value: string): string {

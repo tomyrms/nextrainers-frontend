@@ -12,6 +12,7 @@
  */
 
 import type { Exercise } from "@/lib/api-bibliotheque";
+import { BROWSER_API_BASE, backendAuthHeaders } from "@/lib/backend-auth";
 
 /** One exercise of a training plan (same item shape as the library, §2). */
 export interface PlanExercise extends Exercise {
@@ -102,7 +103,7 @@ function normalize(training: TrainingDetail): TrainingDetail {
 async function apiGet(path: string): Promise<unknown> {
   const base = process.env.API_BASE_URL || "http://localhost:4900";
   try {
-    const response = await fetch(`${base}${path}`, { cache: "no-store" });
+    const response = await fetch(`${base}${path}`, { cache: "no-store", headers: await backendAuthHeaders() });
     if (!response.ok) return null;
     return (await response.json()) as unknown;
   } catch {
@@ -130,7 +131,7 @@ export async function getSharedTraining(
 // --- Browser-side mutations -----------------------------------------------------
 
 function mutationBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4900";
+  return BROWSER_API_BASE;
 }
 
 async function post<T>(path: string, body: unknown): Promise<T | null> {

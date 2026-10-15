@@ -10,6 +10,8 @@
  * hence the `||` fallback and the lazy base-url lookup for the mutation.
  */
 
+import { BROWSER_API_BASE, backendAuthHeaders } from "@/lib/backend-auth";
+
 export interface Profile {
   fullName: string | null;
   imageUrl: string | null;
@@ -64,6 +66,7 @@ export async function getProfile(): Promise<Profile> {
   try {
     const response = await fetch(`${base}/api/user/profile`, {
       cache: "no-store",
+      headers: await backendAuthHeaders(),
     });
     if (!response.ok) return emptyProfile();
     const data = (await response.json()) as Record<string, unknown>;
@@ -86,7 +89,7 @@ export type UpdateProfileResult = { ok: true } | { ok: false; error: string };
 export async function updateProfile(
   patch: ProfilePatch,
 ): Promise<UpdateProfileResult> {
-  const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4900";
+  const base = BROWSER_API_BASE;
   try {
     const response = await fetch(`${base}/api/user/profile`, {
       method: "PUT",

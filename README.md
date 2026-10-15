@@ -4,7 +4,12 @@ French mobile-first UI (Next.js 16 + Tailwind v4, Cache Components) for the
 Nextrainers clone. It talks to [nextrainers-backend](https://github.com/tomyrms/nextrainers-backend).
 
 - Production: https://nextrainers-frontend-tomy-b89a.vercel.app
-- Env: `API_BASE_URL` (server reads) and `NEXT_PUBLIC_API_URL` (browser mutations), both pointing at the backend.
+- Env: `API_BASE_URL` → the backend.
+- **Per-account data:** the backend keeps one store per account. Server reads
+  add the signed-in user's token from the httpOnly `session` cookie
+  (`lib/backend-auth.server.ts`, registered by the root layout); browser
+  mutations go through the same-origin proxy `/api/proxy/api/...`, which adds
+  the token. Signed-out visitors see the shared demo data.
 
 ## Run locally
 
@@ -36,7 +41,7 @@ Pattern: async server components inside `<Suspense>` with static fallbacks
 
 ## Verification
 
-Each screen has a Playwright script in `scripts/verify-*.py` (live API
+Each screen has a Playwright script (plus `verify-tenancy.py`: two accounts + anonymous, isolation through the UI) in `scripts/verify-*.py` (live API
 assertions, 0 console errors, no overflow at 375/420 px, screenshots in
 `docs/`). Run them with both dev servers up, e.g. `python scripts/verify-joueur.py`.
 See `docs/README.md` for the per-screen details. CI builds on every push.

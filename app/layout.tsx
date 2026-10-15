@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+// Registers the server-side token reader for backend calls (per-account data).
+import "@/lib/backend-auth.server";
 
 export const metadata: Metadata = {
   title: "Nextrainers - L’app n°1 des coachs de foot",

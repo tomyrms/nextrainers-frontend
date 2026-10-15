@@ -10,9 +10,9 @@
 4. "Tout marquer comme lu": API unreadCount drops to 0, badge + bell update.
 5. 375x812 + 420x900: no console errors on the inbox, no horizontal overflow.
 
-State note: the backend has no "mark unread" endpoint, so read receipts set
-by this run cannot be restored; on a fully read inbox steps 3-4 assert the
-all-read state instead (button disabled, no bell badge).
+State note: inboxes are per account, and each run uses a fresh account whose
+seeded inbox has an unread notification, so steps 3-4 always run for real and
+nothing shared is mutated. API reads use that account's session token.
 
 Saves docs/notifications.png (before any mutation).
 
@@ -55,11 +55,17 @@ def clone_route(path: str | None) -> str | None:
     return None
 
 
+# Session token of the signed-in test account: inboxes are per account, so
+# API reads must look at the same account as the browser.
+TOKEN: dict[str, str] = {}
+
+
 def api(method: str, path: str, body: Any = None) -> Any:
     data = json.dumps(body).encode() if body is not None else None
-    request = urllib.request.Request(
-        f"{API_URL}{path}", data=data, method=method, headers={"content-type": "application/json"}
-    )
+    headers = {"content-type": "application/json"}
+    if TOKEN.get("value"):
+        headers["authorization"] = f"Bearer {TOKEN['value']}"
+    request = urllib.request.Request(f"{API_URL}{path}", data=data, method=method, headers=headers)
     with urllib.request.urlopen(request, timeout=5) as response:
         text = response.read().decode()
     return json.loads(text) if text else None
@@ -103,11 +109,6 @@ async def main() -> int:
         if not ok:
             problems.append(name)
 
-    inbox = api("GET", "/api/notifications/inbox")
-    notifications = inbox["notifications"]
-    unread = inbox["unreadCount"]
-    check("API inbox shape", isinstance(notifications, list) and isinstance(unread, int))
-
     email = f"notif_{int(time.time())}@test.dev"
     api("POST", "/api/auth/register", {"email": email, "password": PASSWORD})
 
@@ -119,6 +120,13 @@ async def main() -> int:
                 f"{BASE_URL}/api/session", data={"action": "login", "email": email, "password": PASSWORD}
             )
             check("signed in through /api/session", login.ok, str(login.status))
+            TOKEN["value"] = next(c["value"] for c in await context.cookies() if c["name"] == "session")
+
+            inbox = api("GET", "/api/notifications/inbox")
+            notifications = inbox["notifications"]
+            unread = inbox["unreadCount"]
+            check("API inbox shape", isinstance(notifications, list) and isinstance(unread, int))
+            check("fresh account starts with an unread notification", unread >= 1, str(unread))
 
             page = await context.new_page()
             log = ConsoleLog()

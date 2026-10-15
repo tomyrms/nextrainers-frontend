@@ -8,6 +8,8 @@
  * empty states instead of crashing.
  */
 
+import { backendAuthHeaders } from "@/lib/backend-auth";
+
 const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:4900";
 
 // ------------------------------------------------------------------- types
@@ -67,6 +69,7 @@ async function apiGet<T>(path: string): Promise<T | null> {
   try {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       cache: "no-store",
+      headers: await backendAuthHeaders(),
     });
     if (!response.ok) return null;
     return (await response.json()) as T;
